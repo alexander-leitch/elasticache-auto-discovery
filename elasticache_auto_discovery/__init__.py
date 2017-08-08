@@ -48,4 +48,4 @@ def discover(configuration_endpoint, time_to_timeout=None):
 if __name__ == '__main__':
     import sys
     mycache_servers = discover(sys.argv[1])
-    print(mycache_servers)
+    # print(mycache_servers)
