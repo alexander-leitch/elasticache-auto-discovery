@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='elasticache-auto-discovery',
-    version='0.0.5',
+    version='0.0.6',
     description='AWS ElastiCache Auto Discovery Client for Python',
     author='Studio Ousia',
     author_email='admin@ousia.jp',
