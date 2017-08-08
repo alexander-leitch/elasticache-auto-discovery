@@ -13,26 +13,31 @@ def discover(configuration_endpoint, time_to_timeout=None):
 
     try:
         sock.connect((host, int(port)))
-        sock.sendall('config get cluster\r\n')
+        sock.sendall(bytes('cluster nodes\r\n', 'utf-8'))
 
-        data = ''
+        data = bytes('', 'utf-8')
         while True:
             buf = sock.recv(1024);
             data += buf
-            if data[-5:] == 'END\r\n':
-                break
-
-        lines = data.split('\n')
-
-        # 0: CONFIG cluster 0 134
-        # 1: configversion\r\n
-        # 2: hostname|ip-address|port hostname|ip-address|port ...\r\n
-        # 3:
-        # 4: END
-        # 5: blank
-        configs = [conf.split('|') for conf in lines[2].split(' ')]
-
-        sock.sendall('quit\r\n')
+            if data[-3:] == bytes('\n\r\n', 'utf-8'):
+              break
+            
+        lines = data.split(bytes('\r\n', 'utf-8'))
+        servers = lines[1].split(bytes('\n', 'utf-8'))
+        
+        configs = []
+        for server in servers:        # Second Example
+           details = server.split(b' ')
+           if len(details) > 2:
+             configs.append(details[1])
+        
+        # print('-----------------')
+        # print(configs)
+        # print('-----------------')
+        
+        # configs = [conf.split(b':') for conf in ips]
+        
+        sock.sendall(bytes('quit\r\n', 'utf-8'))
 
     finally:
         sock.close()
@@ -42,5 +47,5 @@ def discover(configuration_endpoint, time_to_timeout=None):
 
 if __name__ == '__main__':
     import sys
-    memcache_servers = discover(sys.argv[1])
-    print memcache_servers
+    mycache_servers = discover(sys.argv[1])
+    print(mycache_servers)
